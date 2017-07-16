@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Task 2</string>
+    <string name="action_delete">Delete</string>
+    <string name="error_message">Cannot load images</string>
+</resources>
