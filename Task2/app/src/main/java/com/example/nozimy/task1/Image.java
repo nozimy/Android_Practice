@@ -1,6 +1,8 @@
 package com.example.nozimy.task1;
 
-public final class Image {
+import java.io.Serializable;
+
+public final class Image implements Serializable{
 
     String name;
     String link;

@@ -5,19 +5,6 @@
     android:divider="@color/colorPrimaryDark"
     android:orientation="vertical">
 
-    <!--<CheckBox-->
-    <!--android:id="@+id/cbBox"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content" />-->
-
-    <!--<LinearLayout-->
-    <!--android:id="@+id/linearLayout1"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginLeft="5dp"-->
-    <!--android:layout_weight="1"-->
-    <!--android:background="@android:color/darker_gray"-->
-    <!--android:orientation="vertical">-->
 
     <TextView
         android:id="@+id/im_name"
@@ -29,15 +16,5 @@
         android:textAlignment="textStart"
         android:textColor="@android:color/black"
         android:textSize="20sp"></TextView>
-
-    <!--</LinearLayout>-->
-
-    <!--<ImageView-->
-    <!--android:id="@+id/im_image_link"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="200dp"-->
-    <!--android:background="@android:color/darker_gray"-->
-    <!--android:cropToPadding="false"-->
-    <!--android:scaleType="centerCrop"></ImageView>-->
 
 </LinearLayout>

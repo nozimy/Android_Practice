@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
 public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapter.ImageGalleryAdapterViewHolder> {
@@ -66,14 +64,7 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapte
         Image im = getImage(position);
         holder.itemTitle.setText(im.name);
 
-//        Picasso mPicasso = Picasso.with(holder.itemImage.getContext());
-//        mPicasso.setIndicatorsEnabled(true);
-//        mPicasso.load(im.link)
-//                .resize(400, 200)
-//                .centerCrop()
-//                .placeholder(R.drawable.loading)
-//                .error(R.drawable.error)
-//                .into(holder.itemImage);
+
     }
 
     @Override
