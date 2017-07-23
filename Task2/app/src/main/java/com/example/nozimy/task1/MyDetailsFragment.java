@@ -11,10 +11,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -23,6 +21,13 @@ public class MyDetailsFragment extends Fragment {
 
     private static final String IMAGE_KEY = "image_key";
     private Image mImage;
+    private OnFragmentStopListener mStopListener;
+
+    // Container Activity must implement this interface
+    public interface OnFragmentStopListener {
+        void onFragmentDestroyView();
+        void onDeleted(Image im);
+    }
 
     /**
      * Create a new instance of MyDetailsFragment, initialized to
@@ -42,20 +47,6 @@ public class MyDetailsFragment extends Fragment {
     public Image getImage(){ return (Image) getArguments().getSerializable(IMAGE_KEY); }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-
-    }
-
-    OnFragmentStopListener mStopListener;
-    // Container Activity must implement this interface
-    public interface OnFragmentStopListener {
-        void onFragmentStopped();
-        void onDeleted();
-    }
-
-    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         Activity activity = getActivity(); //todo: check for null
@@ -67,7 +58,11 @@ public class MyDetailsFragment extends Fragment {
 
     }
 
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -94,30 +89,30 @@ public class MyDetailsFragment extends Fragment {
 
         Picasso mPicasso = Picasso.with(imageView.getContext());
         mPicasso.setIndicatorsEnabled(true);
-        mPicasso.load(mImage.link)
+        mPicasso.load(mImage.getLink())
                 .resize(1280, 720)
-                //.centerCrop()
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.error)
                 .into(imageView);
 
-        imDescription.setText(mImage.name);
+        imDescription.setText(mImage.getName());
 
         return view;
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroyView() {
+        super.onDestroyView();
 
-        mStopListener.onFragmentStopped();
+        mStopListener.onFragmentDestroyView();
+
     }
 
     public void backButtonWasPressed() {
-        if (this != null) {
+//        if (this != null) {
 //            Toast.makeText(getActivity(), "Back button pressed", Toast.LENGTH_LONG)
 //                    .show();
-        }
+//        }
     }
 
     @Override
@@ -125,23 +120,15 @@ public class MyDetailsFragment extends Fragment {
         inflater.inflate(R.menu.details_fragment_options, menu);
     }
 
-    Toast mToast;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_delete:
-                if (mToast == null) {
-                    mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
-                }
-                mToast.setText("Delete " + mImage.name);
-                mToast.show();
+                mStopListener.onDeleted(mImage);
 
-                MockDataHelper.getImages().remove(mImage);
-                mStopListener.onDeleted();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 }

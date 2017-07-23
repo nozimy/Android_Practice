@@ -2,20 +2,22 @@ package com.example.nozimy.task1;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 
 import java.util.ArrayList;
 
 public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapter.ImageGalleryAdapterViewHolder> {
 
     private ArrayList<Image> imagesData;
-
     private final ImageGalleryAdapterOnClickHandler mClickHandler;
 
     public interface ImageGalleryAdapterOnClickHandler {
@@ -26,17 +28,21 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapte
         mClickHandler = clickHandler;
     }
 
-    public class ImageGalleryAdapterViewHolder extends RecyclerView.ViewHolder implements OnClickListener{
+    public class ImageGalleryAdapterViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
-        public final TextView itemTitle;
-        public final ImageView itemImage;
+        private final View view;
+        private final TextView itemTitle;
+        private final ImageView itemImage;
+
+        public ImageGalleryAdapterViewHolder(View itemView) {
+            super(itemView);
+
+            view = itemView;
+            itemTitle = (TextView) itemView.findViewById(R.id.im_name);
+            itemImage = (ImageView) itemView.findViewById(R.id.im_image_link);
+            itemView.setOnClickListener(this);
 
 
-        public ImageGalleryAdapterViewHolder(View view) {
-            super(view);
-            itemTitle = (TextView) view.findViewById(R.id.im_name);
-            itemImage = (ImageView) view.findViewById(R.id.im_image_link);
-            view.setOnClickListener(this);
         }
 
         @Override
@@ -61,10 +67,8 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapte
 
     @Override
     public void onBindViewHolder(ImageGalleryAdapterViewHolder holder, int position) {
-        Image im = getImage(position);
-        holder.itemTitle.setText(im.name);
-
-
+        final Image im = getImage(position);
+        holder.itemTitle.setText(im.getName());
     }
 
     @Override
@@ -73,13 +77,14 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapte
         return imagesData.size();
     }
 
-    Image getImage (int position) {
+    private Image getImage (int position) {
         Object im = imagesData.get(position);
         return ((Image) im);
     }
 
     void setImagesData(ArrayList<Image> images) {
-            imagesData = new ArrayList<>(images);
+            //imagesData = new ArrayList<>(images);
+            imagesData = images;
             // обновляем отображаемый список
             notifyDataSetChanged();
     }

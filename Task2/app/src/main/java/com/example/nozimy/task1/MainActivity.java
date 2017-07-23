@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 
 import com.example.nozimy.task1.ImageGalleryAdapter.ImageGalleryAdapterOnClickHandler;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements ImageGalleryAdapterOnClickHandler, MyDetailsFragment.OnFragmentStopListener {
@@ -41,11 +44,11 @@ public class MainActivity extends AppCompatActivity implements ImageGalleryAdapt
 
         mRecyclerView.setAdapter(mImageGalleryAdapter);
 
+        detailsFragment = (MyDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
     }
 
     @Override
     public void onClick(Image image) {
-
 
         mRecyclerView.setVisibility(mRecyclerView.INVISIBLE);
 
@@ -53,28 +56,39 @@ public class MainActivity extends AppCompatActivity implements ImageGalleryAdapt
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         detailsFragment = MyDetailsFragment.newInstance(image);
 
-        fragmentTransaction.add(R.id.fragment_container , detailsFragment);
-        fragmentTransaction.setTransition(fragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.replace(R.id.fragment_container , detailsFragment);
+        fragmentTransaction.setTransition(fragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
 
     @Override
-    public void onFragmentStopped() {
+    public void onFragmentDestroyView() {
         mRecyclerView.setVisibility(mRecyclerView.VISIBLE);
     }
 
     @Override
-    public void onDeleted() {
-        getFragmentManager().popBackStack();
-        mRecyclerView.invalidate();
+    public void onDeleted(Image im) {
+        getSupportFragmentManager().popBackStack();
+
+        ArrayList<Image> imageArrayList = MockDataHelper.getImages();
+        imageArrayList.remove(im);
+        mImageGalleryAdapter.notifyDataSetChanged();
+        //mRecyclerView.invalidate();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
 
-        detailsFragment.backButtonWasPressed();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .remove(getSupportFragmentManager().findFragmentById(R.id.fragment_container))
+                .commitAllowingStateLoss();
+
+//        if (detailsFragment != null) {
+//            detailsFragment.backButtonWasPressed();
+//        }
     }
 }

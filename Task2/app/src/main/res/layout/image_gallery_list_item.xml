@@ -3,8 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:divider="@color/colorPrimaryDark"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    android:layout_marginBottom="1dp"
+    android:background="#FFF"
+    android:clickable="true">
 
     <TextView
         android:id="@+id/im_name"
@@ -15,6 +17,11 @@
         android:fontFamily="casual"
         android:textAlignment="textStart"
         android:textColor="@android:color/black"
-        android:textSize="20sp"></TextView>
+        android:textSize="20sp"/>
+
+    <CheckedTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/checked_text_item"/>
 
 </LinearLayout>
