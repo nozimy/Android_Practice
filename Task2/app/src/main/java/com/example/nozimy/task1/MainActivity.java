@@ -7,20 +7,21 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
-
-import com.example.nozimy.task1.ImageGalleryAdapter.ImageGalleryAdapterOnClickHandler;
 
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements ImageGalleryAdapterOnClickHandler, MyDetailsFragment.OnFragmentStopListener {
+public class MainActivity extends AppCompatActivity implements MyDetailsFragment.OnFragmentStopListener, SelectableImageListAdapterViewHolder.OnItemSelectedListener, SelectableImageListAdapterViewHolder.OnLongClickListener {
 
     private RecyclerView mRecyclerView;
-    private ImageGalleryAdapter mImageGalleryAdapter;
 
     private MyDetailsFragment detailsFragment;
+
+    private SelectableImageListAdapter selectableAdapter;
+    private boolean menuDeleteItemVisiible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +39,55 @@ public class MainActivity extends AppCompatActivity implements ImageGalleryAdapt
         */
         mRecyclerView.setHasFixedSize(true);
 
-        mImageGalleryAdapter = new ImageGalleryAdapter(this);
-
-        mImageGalleryAdapter.setImagesData(MockDataHelper.getImages());
-
-        mRecyclerView.setAdapter(mImageGalleryAdapter);
+        selectableAdapter = new SelectableImageListAdapter(this,this, MockDataHelper.getImages(), true);
+        mRecyclerView.setAdapter(selectableAdapter);
 
         detailsFragment = (MyDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
     }
 
-    @Override
-    public void onClick(Image image) {
 
+    @Override
+    public void onFragmentDestroyView() {
+        mRecyclerView.setVisibility(mRecyclerView.VISIBLE);
+    }
+
+    @Override
+    public void onDeleted(SelectableImage im) {
+        getSupportFragmentManager().popBackStack();
+
+        ArrayList<SelectableImage> toDelete = new ArrayList<SelectableImage>();
+        toDelete.add(im);
+        selectableAdapter.deleteSelectedItems(toDelete);
+
+        selectableAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        MyDetailsFragment fragment = (MyDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(fragment)
+                    .commitAllowingStateLoss();
+        }
+    }
+
+    @Override
+    public void onItemSelected(SelectableImage selectableImage) {
+
+        ArrayList<SelectableImage> selectedItems = selectableAdapter.getSelectedItems();
+
+        if (selectedItems.size() == 0){
+            menuDeleteItemVisiible = false;
+            invalidateOptionsMenu();
+        }
+    }
+
+    @Override
+    public void onItemCliked(SelectableImage image) {
         mRecyclerView.setVisibility(mRecyclerView.INVISIBLE);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -62,33 +100,40 @@ public class MainActivity extends AppCompatActivity implements ImageGalleryAdapt
         fragmentTransaction.commit();
     }
 
-
     @Override
-    public void onFragmentDestroyView() {
-        mRecyclerView.setVisibility(mRecyclerView.VISIBLE);
+    public void onLongClick(boolean isAdapterCheckable) {
+        if (isAdapterCheckable){
+            menuDeleteItemVisiible = true;
+            invalidateOptionsMenu();
+        }
     }
 
     @Override
-    public void onDeleted(Image im) {
-        getSupportFragmentManager().popBackStack();
-
-        ArrayList<Image> imageArrayList = MockDataHelper.getImages();
-        imageArrayList.remove(im);
-        mImageGalleryAdapter.notifyDataSetChanged();
-        //mRecyclerView.invalidate();
+    public boolean isAdapterCheckable() {
+        return selectableAdapter.isAdapterCheckable();
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_activity_options, menu);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .remove(getSupportFragmentManager().findFragmentById(R.id.fragment_container))
-                .commitAllowingStateLoss();
-
-//        if (detailsFragment != null) {
-//            detailsFragment.backButtonWasPressed();
-//        }
+        if (menuDeleteItemVisiible){
+            menu.findItem(R.id.list_action_delete).setVisible(true);
+        }else{
+            menu.findItem(R.id.list_action_delete).setVisible(false);
+        }
+        return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.list_action_delete:
+                selectableAdapter.deleteSelectedItems(selectableAdapter.getSelectedItems());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }

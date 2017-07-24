@@ -20,13 +20,13 @@ import com.squareup.picasso.Picasso;
 public class MyDetailsFragment extends Fragment {
 
     private static final String IMAGE_KEY = "image_key";
-    private Image mImage;
+    private SelectableImage mImage;
     private OnFragmentStopListener mStopListener;
 
     // Container Activity must implement this interface
     public interface OnFragmentStopListener {
         void onFragmentDestroyView();
-        void onDeleted(Image im);
+        void onDeleted(SelectableImage im);
     }
 
     /**
@@ -44,7 +44,7 @@ public class MyDetailsFragment extends Fragment {
 
         return f;
     }
-    public Image getImage(){ return (Image) getArguments().getSerializable(IMAGE_KEY); }
+    public SelectableImage getImage(){ return (SelectableImage) getArguments().getSerializable(IMAGE_KEY); }
 
     @Override
     public void onAttach(Context context) {
@@ -55,7 +55,6 @@ public class MyDetailsFragment extends Fragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement OnFragmentStopListener");
         }
-
     }
 
     @Override
@@ -67,7 +66,6 @@ public class MyDetailsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
 
         if (container == null) {
             // We have different layouts, and in one of them this
